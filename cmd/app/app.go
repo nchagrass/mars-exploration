@@ -1,9 +1,22 @@
 package main
 
-import "marsrobot/internal/bootstrap"
+import (
+	"flag"
+	"marsrobot/internal/bootstrap"
+)
+
+var defaultInputPath = "./test/inputsample-1.txt"
 
 func main() {
-	app, _ := bootstrap.New()
+	var path string
+	flag.StringVar(&path,
+		"input-path",
+		defaultInputPath,
+		"default input path to read instructions from",
+	)
+	flag.Parse()
+
+	app, _ := bootstrap.New(path)
 
 	app.ExecuteInstructions()
 }

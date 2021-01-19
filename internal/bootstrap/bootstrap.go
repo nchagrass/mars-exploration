@@ -1,37 +1,21 @@
 package bootstrap
 
-type Explorer interface {
-	ExecuteInstructions()
-}
+import (
+	"github.com/sirupsen/logrus"
+	"marsrobot/internal/domain"
+)
 
-type Surface struct {
-	MaxX, MaxY int
-}
-
-type MarsExplorer struct {
-	Surface *Surface
-	Robots []Robot
-}
-
-type Robot struct {
-	PosX         int
-	PosY		 int
-	Direction    string
-	Instructions *[]string
-}
-
-func (m *MarsExplorer) ExecuteInstructions() {
-	// @TODO
-}
 
 // Bootstrap initialise the project
-func New() (Explorer, error) {
-	// load configuration
-	// logger / output
+func New(path string) (domain.Explorer, error) {
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	// parse given file path
-
-	// fall back on a default input path
+	_, err := NewFileInstructions(path)
+	if err != nil {
+		logger.Errorf(`unable to read instructions from path "%s" - got %q`, path, err)
+		return nil, err
+	}
 
 	// load mars grid
 
