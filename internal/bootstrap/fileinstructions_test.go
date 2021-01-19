@@ -28,7 +28,7 @@ func Test_contentToStringArray(t *testing.T) {
 			want: []string{"abcde", "hello", ""},
 		},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := contentToStringArray(tt.args.c)
 			if (err != nil) != tt.wantErr {

@@ -5,7 +5,6 @@ import (
 	"marsrobot/internal/domain"
 )
 
-
 // Bootstrap initialise the project
 func New(path string) (domain.Explorer, error) {
 	logger := logrus.New()

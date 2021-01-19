@@ -2,7 +2,7 @@ package domain
 
 type Robot struct {
 	PosX         int
-	PosY		 int
+	PosY         int
 	Direction    string
-	Instructions *[]string
+	Instructions []string
 }

@@ -34,10 +34,14 @@ func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 		return nil, fmt.Errorf("failed to build mars surface, got %q", err)
 	}
 
-	// load robots
+	robots, err := mb.LoadRobotInstructions(instructions[1:])
+	if err != nil {
+		return nil, fmt.Errorf("failed to load robots instructions, got %q", err)
+	}
 
 	return &MarsExplorer{
 		Surface: surface,
+		Robots:  robots,
 	}, nil
 }
 
@@ -55,13 +59,13 @@ func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
 	var maxX int
 	maxX, err := strconv.Atoi(l[0])
 	if err != nil {
-		mb.logger.Errorf(`failed to convert surface X "%s" into integer(s), got %q`, l[0], err)
+		mb.logger.Errorf(`failed to convert surface X "%s" into integer, got %q`, l[0], err)
 		return nil, err
 	}
 	var maxY int
 	maxY, err = strconv.Atoi(l[1])
 	if err != nil {
-		mb.logger.Errorf(`failed to convert surface Y "%s" into integer(s), got %q`, l[0], err)
+		mb.logger.Errorf(`failed to convert surface Y "%s" into integer, got %q`, l[0], err)
 		return nil, err
 	}
 
@@ -69,5 +73,49 @@ func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
 		MaxX: maxX,
 		MaxY: maxY,
 	}, nil
+}
 
+func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("expected instructions got 0")
+	}
+
+	robots := make([]Robot, 0)
+	rCount := 0
+	for _, v := range lines {
+		if v == "" {
+			continue
+		}
+		l := strings.Split(v, " ")
+		switch len(l) {
+		case 3:
+			var posX int
+			posX, err := strconv.Atoi(l[0])
+			if err != nil {
+				mb.logger.Errorf(`failed to convert pos X "%s" into integer, got %q`, l[0], err)
+				return nil, err
+			}
+			var posY int
+			posY, err = strconv.Atoi(l[1])
+			if err != nil {
+				mb.logger.Errorf(`failed to convert pos Y "%s" into integer, got %q`, l[0], err)
+				return nil, err
+			}
+			robots = append(robots, Robot{
+				PosX:      posX,
+				PosY:      posY,
+				Direction: l[2], // @TODO validate direction
+			})
+			continue
+		case 1:
+			// @TODO validate instructions
+			robots[rCount].Instructions = strings.SplitAfter(v, "")
+			rCount++
+			continue
+		default:
+			continue
+		}
+	}
+
+	return robots, nil
 }

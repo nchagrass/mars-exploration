@@ -33,7 +33,7 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			args: args{
 				line: "R 5",
 			},
-			want: nil,
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -41,7 +41,7 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			args: args{
 				line: "2 G",
 			},
-			want: nil,
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -49,7 +49,7 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			args: args{
 				line: "2",
 			},
-			want: nil,
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -57,7 +57,7 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			args: args{
 				line: "1 2 5",
 			},
-			want: nil,
+			want:    nil,
 			wantErr: true,
 		},
 	}
@@ -76,6 +76,74 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewSurface() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMarsBuilder_LoadRobotInstructions(t *testing.T) {
+	type args struct {
+		lines []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []Robot
+		wantErr bool
+	}{
+		{
+			name: "successfully load n robots",
+			args: args{
+				lines: []string{
+					"1 1 E",
+					"RFRFRFRF",
+					"",
+					"1 2 N",
+					"RFRFRFRF",
+					"",
+					"5 3 S",
+					"RFRFRFRF",
+					"",
+				},
+			},
+			want: []Robot{
+				{
+					PosX:         1,
+					PosY:         1,
+					Direction:    "E",
+					Instructions: []string{"R", "F", "R", "F", "R", "F", "R", "F"},
+				},
+				{
+					PosX:         1,
+					PosY:         2,
+					Direction:    "N",
+					Instructions: []string{"R", "F", "R", "F", "R", "F", "R", "F"},
+				},
+				{
+					PosX:         5,
+					PosY:         3,
+					Direction:    "S",
+					Instructions: []string{"R", "F", "R", "F", "R", "F", "R", "F"},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := logrus.New()
+			l.SetOutput(ioutil.Discard)
+
+			mb := &MarsBuilder{
+				logger: l,
+			}
+			got, err := mb.LoadRobotInstructions(tt.args.lines)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("LoadRobotInstructions() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("LoadRobotInstructions() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
