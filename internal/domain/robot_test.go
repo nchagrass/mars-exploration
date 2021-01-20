@@ -9,10 +9,16 @@ func TestRobot_Execute(t *testing.T) {
 		Direction    string
 		Instructions []string
 	}
+
+	type want struct {
+		directions []string
+		posX, posY []int
+	}
+
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []string
+		want    want
 		wantErr bool
 	}{
 		{
@@ -21,7 +27,11 @@ func TestRobot_Execute(t *testing.T) {
 				Direction:    "E",
 				Instructions: []string{"R", "R", "R", "R"},
 			},
-			want: []string{"S", "W", "N", "E"},
+			want: want{
+				[]string{"S", "W", "N", "E"},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+			},
 		},
 		{
 			name: "robot can turn right and left multiple times",
@@ -29,15 +39,33 @@ func TestRobot_Execute(t *testing.T) {
 				Direction:    "N",
 				Instructions: []string{"R", "R", "L", "L"},
 			},
-			want: []string{"E", "S", "E", "N"},
+			want: want{
+				[]string{"E", "S", "E", "N"},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+			},
 		},
 		{
 			name: "robot fails for unsupported direction",
 			fields: fields{
 				Direction: "R",
 			},
-			want:    nil,
+			want:    want{},
 			wantErr: true,
+		},
+		{
+			name: "robot can go forward and move around",
+			fields: fields{
+				PosX:         0,
+				PosY:         0,
+				Direction:    "E",
+				Instructions: []string{"F", "L", "F"},
+			},
+			want: want{
+				directions: []string{"E", "N", "N"},
+				posX:       []int{1, 1, 1},
+				posY:       []int{0, 0, 1},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -51,8 +79,18 @@ func TestRobot_Execute(t *testing.T) {
 
 			for i, c := range r.Instructions {
 				err := r.Execute(c)
-				if r.Direction != tt.want[i] {
-					t.Errorf("Robot.Execute() got %s, want %s", r.Direction, tt.want[i])
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Robot.Execute() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if r.Direction != tt.want.directions[i] {
+					t.Errorf("Robot.Execute() got direction %s, want %s", r.Direction, tt.want.directions[i])
+				}
+				if r.PosY != tt.want.posY[i] {
+					t.Errorf("Robot.Execute() got pos Y %d, want %d", r.PosY, tt.want.posY[i])
+				}
+				if r.PosX != tt.want.posX[i] {
+					t.Errorf("Robot.Execute() got pos X %d, want %d", r.PosX, tt.want.posX[i])
 				}
 			}
 		})
