@@ -48,3 +48,34 @@ Expected output
 
 ## The Solution
 
+Simple modelling with `MarsExplorer` struct capturing a surface defined with `X, Y` holding `[]Robot` and its instructions.
+
+### How to run the app
+
+Prerequisite:
+- [Golang 1.15](https://golang.org/doc/install)
+
+To run the app with a default input sample ([/test/inputsample-1.txt](/test/inputsample-1.txt)):
+
+``
+go run ./cmd/app/app.go # currently not implemented
+``
+
+To run the app with a custom input: 
+```
+go run ./cmd/app/app.go -input-path=./path/to/file
+```
+
+To run the tests:
+```
+go test ./...
+```
+
+### TODOs
+
+- [ ] Finish the bootstrap of the application
+- [ ] Add an interface to output the final state
+- [ ] Implement integration test (and add more samples)
+- [ ] Add the "lost" logic for robot(s)
+- [ ] a lot of refactoring could be done in few places
+- [ ] add documentation for structs and methods
