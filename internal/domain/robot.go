@@ -82,16 +82,16 @@ func (r *Robot) turnLeft() error {
 func (r *Robot) forward() error {
 	switch r.Direction {
 	case DirectionEast:
-		r.PosX++
+		r.PosX = r.PosX + 1
 		return nil
 	case DirectionWest:
-		r.PosX--
+		r.PosX = r.PosX - 1
 		return nil
 	case DirectionNorth:
-		r.PosY++
+		r.PosY = r.PosY + 1
 		return nil
 	case DirectionSouth:
-		r.PosY--
+		r.PosY = r.PosY - 1
 		return nil
 	default:
 		return fmt.Errorf("unsupported Robot direction %s", r.Direction)

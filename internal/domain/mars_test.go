@@ -148,3 +148,47 @@ func TestMarsBuilder_LoadRobotInstructions(t *testing.T) {
 		})
 	}
 }
+
+func TestMarsExplorer_SendInstructions(t *testing.T) {
+	type fields struct {
+		Surface *Surface
+		Robots  []Robot
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []Robot
+	}{
+		{
+			name: "robot can navigate on mars successfully",
+			fields: fields{
+				Surface: &Surface{
+					MaxX: 4,
+					MaxY: 4,
+				},
+				Robots: []Robot{
+					{PosX: 0, PosY: 0, Direction: "E", Instructions: []string{"F", "L", "F", "R", "F"}},
+				},
+			},
+			want: []Robot{
+				{PosX: 2, PosY: 1, Direction: "E", Instructions: []string{"F", "L", "F", "R", "F"}},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &MarsExplorer{
+				Surface: tt.fields.Surface,
+				Robots:  tt.fields.Robots,
+			}
+
+			m.SendInstructions()
+
+			for i, r := range tt.fields.Robots {
+				if !reflect.DeepEqual(r, tt.want[i]) {
+					t.Errorf("SendInstructions() got %v, want %v", r, tt.want[i])
+				}
+			}
+		})
+	}
+}

@@ -8,7 +8,7 @@ import (
 )
 
 type Explorer interface {
-	ExecuteInstructions()
+	SendInstructions()
 }
 
 type MarsBuilder struct {
@@ -45,8 +45,16 @@ func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 	}, nil
 }
 
-func (m *MarsExplorer) ExecuteInstructions() {
-	// @TODO
+func (m *MarsExplorer) SendInstructions() {
+	for r, robot := range m.Robots {
+		// is robot actually on the surface?
+		for _, c := range robot.Instructions {
+			// did a robot get lost before?
+			m.Robots[r].Execute(c)
+			// is the robot lost now?
+		}
+		// prepare output // inject service to deal with output
+	}
 }
 
 func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
@@ -104,11 +112,11 @@ func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 			robots = append(robots, Robot{
 				PosX:      posX,
 				PosY:      posY,
-				Direction: l[2], // @TODO validate direction
+				Direction: l[2], // @TODO validate direction or maybe on execution
 			})
 			continue
 		case 1:
-			// @TODO validate instructions
+			// @TODO validate instructions  or maybe on execution
 			robots[rCount].Instructions = strings.SplitAfter(v, "")
 			rCount++
 			continue

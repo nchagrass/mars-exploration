@@ -18,5 +18,5 @@ func main() {
 
 	app, _ := bootstrap.New(path)
 
-	app.ExecuteInstructions()
+	app.SendInstructions()
 }
