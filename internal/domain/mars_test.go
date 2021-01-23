@@ -60,6 +60,34 @@ func TestMarsBuilder_NewSurface(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
+		{
+			name: "X is too big",
+			args: args{
+				line: "51 10",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Y is too big",
+			args: args{
+				line: "50 999",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+
+		{
+			name: "max values are ok",
+			args: args{
+				line: "50 50",
+			},
+			want: &Surface{
+				MaxX: 50,
+				MaxY: 50,
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

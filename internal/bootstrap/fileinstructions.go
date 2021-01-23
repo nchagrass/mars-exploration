@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// NewFileInstructions takes a file path and return its content into []string or an error
 func NewFileInstructions(path string) ([]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -23,6 +24,7 @@ func NewFileInstructions(path string) ([]string, error) {
 	return lines, nil
 }
 
+// contentToStringArray takes an io.Reader and convert each lines/row/bytes into string returning a []string
 func contentToStringArray(c io.Reader) ([]string, error) {
 	var lines []string
 	scanner := bufio.NewScanner(c)

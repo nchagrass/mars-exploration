@@ -7,34 +7,41 @@ import (
 	"strings"
 )
 
+// Explorer is our main interface (only implemented by MarsExplorer for now)
 type Explorer interface {
 	SendInstructions()
-	Report()
 }
 
+// MarsBuilder allows us to override / provide a *logrus.logger (should have a particular interface)
 type MarsBuilder struct {
 	logger *logrus.Logger
 }
 
+// Surface is the representation of Mars as a grid
 type Surface struct {
 	MaxX, MaxY int
 }
 
+// Scent is the representation of the trace of a robot which got lost
 type Scent struct {
 	posX, posY int
 	direction  string
 }
 
+// MarsExplorer contains all the pieces to execute the instructions to the robots
 type MarsExplorer struct {
 	Surface *Surface
 	Robots  []Robot
 	Scents  []Scent
 }
 
+// NewMarsBuilder is our MarsBuilder constructor, allows us to get started by injecting a logger
 func NewMarsBuilder(logger *logrus.Logger) MarsBuilder {
 	return MarsBuilder{logger: logger}
 }
 
+// Build is setting up our MarsExplorer
+// by receiving a specific array of instructions to setup both our surface and robots
 func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 	if len(instructions) == 0 {
 		return nil, fmt.Errorf("expected instructions, received %d", len(instructions))
@@ -56,6 +63,7 @@ func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 	}, nil
 }
 
+// SendInstructions is the main entry point to iterate through our robots and execute the given instructions
 func (m *MarsExplorer) SendInstructions() {
 	for r := range m.Robots {
 		if m.isRobotOffBound(m.Robots[r]) {
@@ -81,6 +89,10 @@ func (m *MarsExplorer) SendInstructions() {
 	}
 }
 
+// NewSurface is the Surface constructor making sure the grid is in order
+// The first line of input is the upper-right coordinates of the rectangular world, the lower-left
+// coordinates are assumed to be 0, 0.
+// The maximum value for any coordinate is 50.
 func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
 	l := strings.Split(line, " ")
 
@@ -101,12 +113,22 @@ func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
 		return nil, err
 	}
 
+	if maxX > 50 || maxY > 50 {
+		mb.logger.Errorf("maximum value for the grid execeeded 50")
+		return nil, fmt.Errorf("maximum value for the grid execeeded 50")
+	}
+
 	return &Surface{
 		MaxX: maxX,
 		MaxY: maxY,
 	}, nil
 }
 
+// LoadRobotInstructions takes a []string and setup our robots given a specific input
+// It consists of a sequence of robot positions and instructions (two lines per
+// robot). A position consists of two integers specifying the initial coordinates of the robot and
+// an orientation (N, S, E, W), all separated by whitespace on one line. A robot instruction is a
+// string of the letters “L”, “R”, and “F” on one line.
 func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 	if len(lines) == 0 {
 		return nil, fmt.Errorf("expected instructions got 0")
@@ -152,6 +174,7 @@ func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 	return robots, nil
 }
 
+// isRobotOffBound asserts a robot is still on the planet
 func (m *MarsExplorer) isRobotOffBound(r Robot) bool {
 	if r.PosY > m.Surface.MaxY {
 		return true
@@ -164,6 +187,7 @@ func (m *MarsExplorer) isRobotOffBound(r Robot) bool {
 	return false
 }
 
+// isThereARobotScent verify if there isn't a robot's scent left for that grid position
 func (m *MarsExplorer) isThereARobotScent(r Robot, c string) bool {
 	if len(m.Scents) == 0 {
 		return false
@@ -179,6 +203,7 @@ func (m *MarsExplorer) isThereARobotScent(r Robot, c string) bool {
 	return false
 }
 
+// leaveScent create a new scent when a robot got lost
 func (m *MarsExplorer) leaveScent(r Robot) {
 	m.Scents = append(m.Scents, Scent{
 		posX:      r.PosX,
