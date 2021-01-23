@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -155,6 +156,24 @@ func TestMarsBuilder_LoadRobotInstructions(t *testing.T) {
 				},
 			},
 			wantErr: false,
+		},
+		{
+			name: "instructions can't exceed a 100",
+			args: args{
+				lines: []string{
+					"1 1 E",
+					strings.Repeat("RFRFRF", 17),
+					"",
+					"1 2 N",
+					"RFRFRFRF",
+					"",
+					"5 3 S",
+					"RFRFRFRF",
+					"",
+				},
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

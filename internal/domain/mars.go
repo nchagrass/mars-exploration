@@ -129,6 +129,7 @@ func (mb *MarsBuilder) NewSurface(line string) (*Surface, error) {
 // robot). A position consists of two integers specifying the initial coordinates of the robot and
 // an orientation (N, S, E, W), all separated by whitespace on one line. A robot instruction is a
 // string of the letters “L”, “R”, and “F” on one line.
+// All instruction strings will be less than 100 characters in length.
 func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 	if len(lines) == 0 {
 		return nil, fmt.Errorf("expected instructions got 0")
@@ -164,6 +165,10 @@ func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 		case 1:
 			// @TODO validate instructions  or maybe on execution
 			robots[rCount].Instructions = strings.SplitAfter(v, "")
+			if len(robots[rCount].Instructions) > 100 {
+				mb.logger.Errorf("instructions are limited to 100")
+				return nil, fmt.Errorf("instructions are limited to 100")
+			}
 			rCount++
 			continue
 		default:
