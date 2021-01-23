@@ -78,4 +78,4 @@ go test ./...
 - [x] Implement integration test
 - [x] Add the "lost" logic for robot(s)
 - [ ] a lot of refactoring could be done in few places
-- [ ] add documentation for structs and methods
+- [x] add documentation for structs and methods
