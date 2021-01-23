@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"marsrobot/internal/bootstrap"
+	"github.com/nchagrass/mars-exploration/internal/bootstrap"
 )
 
 var defaultInputPath = "./test/inputsample-1.txt"

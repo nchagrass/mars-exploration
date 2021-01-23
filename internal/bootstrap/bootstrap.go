@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
+	"github.com/nchagrass/mars-exploration/internal/domain"
 	"github.com/sirupsen/logrus"
-	"marsrobot/internal/domain"
 )
 
 // Bootstrap initialise the project

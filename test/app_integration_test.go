@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/nchagrass/mars-exploration/internal/bootstrap"
 	"io/ioutil"
-	"marsrobot/internal/bootstrap"
 	"os"
 	"testing"
 )

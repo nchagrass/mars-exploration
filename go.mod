@@ -1,4 +1,4 @@
-module marsrobot
+module github.com/nchagrass/mars-exploration
 
 go 1.15
 
