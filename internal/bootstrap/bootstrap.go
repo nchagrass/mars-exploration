@@ -19,8 +19,12 @@ func New(path string) {
 	builder := domain.NewMarsBuilder(logger)
 	me, err := builder.Build(setup)
 	if err != nil {
-		logrus.Fatal("failed to prepare the exploration, %v", err)
+		logrus.Fatalf("failed to prepare the exploration, %q", err)
 	}
 
 	me.SendInstructions()
+
+	reporter := domain.Reporter{Explorer: me}
+
+	reporter.Print()
 }

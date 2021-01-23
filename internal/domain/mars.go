@@ -9,6 +9,7 @@ import (
 
 type Explorer interface {
 	SendInstructions()
+	Report()
 }
 
 type MarsBuilder struct {
@@ -77,7 +78,6 @@ func (m *MarsExplorer) SendInstructions() {
 				break
 			}
 		}
-		// prepare output // inject service to deal with output
 	}
 }
 

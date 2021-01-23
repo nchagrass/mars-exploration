@@ -74,7 +74,7 @@ go test ./...
 ### TODOs
 
 - [x] Finish the bootstrap of the application
-- [ ] Add an interface to output the final state
+- [x] Add an interface to output the final state
 - [ ] Implement integration test (and add more samples)
 - [x] Add the "lost" logic for robot(s)
 - [ ] a lot of refactoring could be done in few places
