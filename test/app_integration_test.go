@@ -1,13 +1,26 @@
 package main
 
 import (
+	"io/ioutil"
+	"marsrobot/internal/bootstrap"
+	"os"
 	"testing"
 )
 
 func TestApp_ExploreMars(t *testing.T) {
-	// @TODO boot strap with sample output
+	rescueStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
 
-	// @TODO launch app
+	expectedOutput, _ := ioutil.ReadFile("./expectedoutputsample-1.txt")
 
-	// @TODO assert output matches expected output
+	bootstrap.New("./inputsample-1.txt")
+
+	w.Close()
+	out, _ := ioutil.ReadAll(r)
+	os.Stdout = rescueStdout
+
+	if string(expectedOutput) != string(out) {
+		t.Fatalf("Failed to explore mars, got %s, want %s", string(out), string(expectedOutput))
+	}
 }

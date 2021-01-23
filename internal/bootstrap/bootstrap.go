@@ -25,6 +25,5 @@ func New(path string) {
 	me.SendInstructions()
 
 	reporter := domain.Reporter{Explorer: me}
-
 	reporter.Print()
 }

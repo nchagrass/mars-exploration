@@ -130,10 +130,9 @@ func (r *Robot) isLost() bool {
 }
 
 func (r *Robot) ToString() string {
-	var lost string
 	if r.isLost() {
-		lost = "LOST"
+		return fmt.Sprintf("%d %d %s %s", r.PosX, r.PosY, r.Direction, "LOST")
 	}
 
-	return fmt.Sprintf("%d %d %s %s", r.PosX, r.PosY, r.Direction, lost)
+	return fmt.Sprintf("%d %d %s", r.PosX, r.PosY, r.Direction)
 }
