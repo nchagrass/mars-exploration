@@ -18,6 +18,7 @@ type Robot struct {
 	PosY         int
 	Direction    string
 	Instructions []string
+	Lost         bool
 }
 
 type ControlledRobot interface {
@@ -25,6 +26,7 @@ type ControlledRobot interface {
 	forward() error
 	turnRight() error
 	turnLeft() error
+	isLost() bool
 }
 
 func (r *Robot) Execute(c string) error {
@@ -96,4 +98,33 @@ func (r *Robot) forward() error {
 	default:
 		return fmt.Errorf("unsupported Robot direction %s", r.Direction)
 	}
+}
+
+func (r *Robot) backward() error {
+	switch r.Direction {
+	case DirectionEast:
+		r.PosX = r.PosX - 1
+		return nil
+	case DirectionWest:
+		r.PosX = r.PosX + 1
+		return nil
+	case DirectionNorth:
+		r.PosY = r.PosY - 1
+		return nil
+	case DirectionSouth:
+		r.PosY = r.PosY + 1
+		return nil
+	default:
+		return fmt.Errorf("unsupported Robot direction %s", r.Direction)
+	}
+}
+
+func (r *Robot) lost() {
+	r.Lost = true
+	// panic / err up
+	_ = r.backward()
+}
+
+func (r *Robot) isLost() bool {
+	return r.Lost
 }

@@ -174,6 +174,39 @@ func TestMarsExplorer_SendInstructions(t *testing.T) {
 				{PosX: 2, PosY: 1, Direction: "E", Instructions: []string{"F", "L", "F", "R", "F"}},
 			},
 		},
+
+		{
+			name: "1 robot can get lost",
+			fields: fields{
+				Surface: &Surface{
+					MaxX: 5,
+					MaxY: 3,
+				},
+				Robots: []Robot{
+					{PosX: 3, PosY: 2, Direction: "N", Lost: false, Instructions: []string{"F", "R", "R", "F", "L", "L", "F", "F", "R", "R", "F", "L", "L"}},
+				},
+			},
+			want: []Robot{
+				{PosX: 3, PosY: 3, Direction: "N", Lost: true, Instructions: []string{"F", "R", "R", "F", "L", "L", "F", "F", "R", "R", "F", "L", "L"}},
+			},
+		},
+		{
+			name: "2 robots can't get lost at the same spot",
+			fields: fields{
+				Surface: &Surface{
+					MaxX: 5,
+					MaxY: 3,
+				},
+				Robots: []Robot{
+					{PosX: 3, PosY: 2, Direction: "N", Instructions: []string{"F", "R", "R", "F", "L", "L", "F", "F", "R", "R", "F", "L", "L"}},
+					{PosX: 3, PosY: 3, Direction: "N", Instructions: []string{"F", "R", "F"}},
+				},
+			},
+			want: []Robot{
+				{PosX: 3, PosY: 3, Direction: "N", Lost: true, Instructions: []string{"F", "R", "R", "F", "L", "L", "F", "F", "R", "R", "F", "L", "L"}},
+				{PosX: 4, PosY: 3, Direction: "E", Lost: false, Instructions: []string{"F", "R", "F"}},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -184,7 +217,7 @@ func TestMarsExplorer_SendInstructions(t *testing.T) {
 
 			m.SendInstructions()
 
-			for i, r := range tt.fields.Robots {
+			for i, r := range m.Robots {
 				if !reflect.DeepEqual(r, tt.want[i]) {
 					t.Errorf("SendInstructions() got %v, want %v", r, tt.want[i])
 				}

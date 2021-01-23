@@ -19,9 +19,15 @@ type Surface struct {
 	MaxX, MaxY int
 }
 
+type Scent struct {
+	posX, posY int
+	direction  string
+}
+
 type MarsExplorer struct {
 	Surface *Surface
 	Robots  []Robot
+	Scents  []Scent
 }
 
 func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
@@ -46,12 +52,26 @@ func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 }
 
 func (m *MarsExplorer) SendInstructions() {
-	for r, robot := range m.Robots {
-		// is robot actually on the surface?
-		for _, c := range robot.Instructions {
-			// did a robot get lost before?
-			m.Robots[r].Execute(c)
-			// is the robot lost now?
+	for r := range m.Robots {
+		if m.isRobotOffBound(m.Robots[r]) {
+			// panic / err?
+			// continue for now
+			continue
+		}
+
+		for i := range m.Robots[r].Instructions {
+			if m.isThereARobotScent(m.Robots[r], m.Robots[r].Instructions[i]) {
+				continue
+			}
+
+			// @TODO check for error
+			_ = m.Robots[r].Execute(m.Robots[r].Instructions[i])
+
+			if m.isRobotOffBound(m.Robots[r]) {
+				m.Robots[r].lost()
+				m.leaveScent(m.Robots[r])
+				break
+			}
 		}
 		// prepare output // inject service to deal with output
 	}
@@ -126,4 +146,39 @@ func (mb *MarsBuilder) LoadRobotInstructions(lines []string) ([]Robot, error) {
 	}
 
 	return robots, nil
+}
+
+func (m *MarsExplorer) isRobotOffBound(r Robot) bool {
+	if r.PosY > m.Surface.MaxY {
+		return true
+	}
+
+	if r.PosX > m.Surface.MaxX {
+		return true
+	}
+
+	return false
+}
+
+func (m *MarsExplorer) isThereARobotScent(r Robot, c string) bool {
+	if len(m.Scents) == 0 {
+		return false
+	}
+
+	for _, s := range m.Scents {
+		// sounds like there might a better way to do this
+		if s.posY == r.PosY && s.posX == r.PosX && s.direction == r.Direction && c == CommandForward {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (m *MarsExplorer) leaveScent(r Robot) {
+	m.Scents = append(m.Scents, Scent{
+		posX:      r.PosX,
+		posY:      r.PosY,
+		direction: r.Direction,
+	})
 }

@@ -76,6 +76,6 @@ go test ./...
 - [ ] Finish the bootstrap of the application
 - [ ] Add an interface to output the final state
 - [ ] Implement integration test (and add more samples)
-- [ ] Add the "lost" logic for robot(s)
+- [x] Add the "lost" logic for robot(s)
 - [ ] a lot of refactoring could be done in few places
 - [ ] add documentation for structs and methods
