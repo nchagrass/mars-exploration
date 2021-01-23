@@ -16,7 +16,5 @@ func main() {
 	)
 	flag.Parse()
 
-	app, _ := bootstrap.New(path)
-
-	app.SendInstructions()
+	bootstrap.New(path)
 }

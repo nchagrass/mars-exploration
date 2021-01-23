@@ -30,6 +30,10 @@ type MarsExplorer struct {
 	Scents  []Scent
 }
 
+func NewMarsBuilder(logger *logrus.Logger) MarsBuilder {
+	return MarsBuilder{logger: logger}
+}
+
 func (mb *MarsBuilder) Build(instructions []string) (*MarsExplorer, error) {
 	if len(instructions) == 0 {
 		return nil, fmt.Errorf("expected instructions, received %d", len(instructions))

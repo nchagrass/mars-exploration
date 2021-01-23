@@ -58,7 +58,7 @@ Prerequisite:
 To run the app with a default input sample ([/test/inputsample-1.txt](/test/inputsample-1.txt)):
 
 ``
-go run ./cmd/app/app.go # currently not implemented
+go run ./cmd/app/app.go
 ``
 
 To run the app with a custom input: 
@@ -73,7 +73,7 @@ go test ./...
 
 ### TODOs
 
-- [ ] Finish the bootstrap of the application
+- [x] Finish the bootstrap of the application
 - [ ] Add an interface to output the final state
 - [ ] Implement integration test (and add more samples)
 - [x] Add the "lost" logic for robot(s)
